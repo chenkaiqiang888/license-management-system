@@ -1,0 +1,18 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/activations/page": "app/activations/page.js",
+  "/api/activations/route": "app/api/activations/route.js",
+  "/api/activations/unbind/route": "app/api/activations/unbind/route.js",
+  "/api/licenses/[id]/route": "app/api/licenses/[id]/route.js",
+  "/api/licenses/revoke/route": "app/api/licenses/revoke/route.js",
+  "/api/licenses/route": "app/api/licenses/route.js",
+  "/api/licenses/create/route": "app/api/licenses/create/route.js",
+  "/api/logs/route": "app/api/logs/route.js",
+  "/api/validate/route": "app/api/validate/route.js",
+  "/licenses/page": "app/licenses/page.js",
+  "/login/page": "app/login/page.js",
+  "/api/licenses/renew/route": "app/api/licenses/renew/route.js",
+  "/logs/page": "app/logs/page.js",
+  "/page": "app/page.js",
+  "/test/page": "app/test/page.js"
+}

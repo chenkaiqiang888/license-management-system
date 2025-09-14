@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>授权客户端示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .license-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        .license-info h3 {
+            margin-top: 0;
+        }
+        .license-info p {
+            margin: 5px 0;
+        }
+        .code {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            border: 1px solid #dee2e6;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>授权客户端示例</h1>
+        <p>这是一个授权客户端的演示页面，展示如何集成授权验证功能。</p>
+
+        <div class="form-group">
+            <label for="licenseKey">授权码:</label>
+            <input type="text" id="licenseKey" placeholder="请输入16位授权码" maxlength="16">
+        </div>
+
+        <div class="form-group">
+            <button onclick="validateLicense()" id="validateBtn">验证授权</button>
+            <button onclick="checkStatus()" id="checkBtn">检查状态</button>
+            <button onclick="destroyClient()" id="destroyBtn">销毁客户端</button>
+        </div>
+
+        <div id="status" class="status" style="display: none;"></div>
+        <div id="licenseInfo" class="license-info" style="display: none;"></div>
+
+        <h2>使用说明</h2>
+        <ol>
+            <li>在输入框中输入16位授权码</li>
+            <li>点击"验证授权"按钮进行授权验证</li>
+            <li>验证成功后，客户端会自动管理token和刷新</li>
+            <li>点击"检查状态"可以查看当前授权状态</li>
+            <li>点击"销毁客户端"可以清理所有授权信息</li>
+        </ol>
+
+        <h2>集成代码示例</h2>
+        <div class="code">
+// 初始化授权客户端
+const licenseClient = new LicenseClient({
+    apiUrl: 'https://your-domain.vercel.app/api',
+    onTokenExpired: () => {
+        console.log('授权已过期，请重新验证')
+        // 处理授权过期逻辑
+    },
+    onValidationFailed: (error) => {
+        console.log('授权验证失败:', error)
+        // 处理验证失败逻辑
+    }
+})
+
+// 验证授权
+const result = await licenseClient.validateLicense('YOUR_LICENSE_KEY')
+if (result.success) {
+    console.log('授权验证成功')
+    // 继续执行软件功能
+} else {
+    console.log('授权验证失败:', result.error)
+    // 显示授权错误信息
+}
+
+// 检查授权状态
+if (licenseClient.isAuthorized()) {
+    console.log('当前已授权')
+    // 执行需要授权的功能
+} else {
+    console.log('当前未授权')
+    // 提示用户输入授权码
+}
+        </div>
+    </div>
+
+    <script src="license-client.js"></script>
+    <script>
+        let licenseClient = null
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status')
+            statusDiv.textContent = message
+            statusDiv.className = `status ${type}`
+            statusDiv.style.display = 'block'
+        }
+
+        function showLicenseInfo(info) {
+            const infoDiv = document.getElementById('licenseInfo')
+            infoDiv.innerHTML = `
+                <h3>授权信息</h3>
+                <p><strong>授权码:</strong> ${info.licenseKey}</p>
+                <p><strong>设备ID:</strong> ${info.deviceId}</p>
+                <p><strong>过期时间:</strong> ${info.expiresAt.toLocaleString()}</p>
+                <p><strong>Token:</strong> <span class="code">${info.token}</span></p>
+            `
+            infoDiv.style.display = 'block'
+        }
+
+        async function validateLicense() {
+            const licenseKey = document.getElementById('licenseKey').value.trim()
+            
+            if (!licenseKey) {
+                showStatus('请输入授权码', 'error')
+                return
+            }
+
+            if (licenseKey.length !== 16) {
+                showStatus('授权码必须是16位', 'error')
+                return
+            }
+
+            try {
+                showStatus('正在验证授权...', 'info')
+                
+                // 初始化客户端
+                if (!licenseClient) {
+                    licenseClient = new LicenseClient({
+                        apiUrl: window.location.origin + '/api',
+                        onTokenExpired: () => {
+                            showStatus('授权已过期，请重新验证', 'error')
+                        },
+                        onValidationFailed: (error) => {
+                            showStatus('授权验证失败: ' + error, 'error')
+                        }
+                    })
+                }
+
+                const result = await licenseClient.validateLicense(licenseKey)
+                
+                if (result.success) {
+                    showStatus('授权验证成功！', 'success')
+                    showLicenseInfo(licenseClient.getLicenseInfo())
+                } else {
+                    showStatus('授权验证失败: ' + result.error, 'error')
+                }
+            } catch (error) {
+                showStatus('验证过程中发生错误: ' + error.message, 'error')
+            }
+        }
+
+        function checkStatus() {
+            if (!licenseClient) {
+                showStatus('请先初始化客户端', 'error')
+                return
+            }
+
+            if (licenseClient.isAuthorized()) {
+                showStatus('当前已授权', 'success')
+                showLicenseInfo(licenseClient.getLicenseInfo())
+            } else {
+                showStatus('当前未授权', 'error')
+                document.getElementById('licenseInfo').style.display = 'none'
+            }
+        }
+
+        function destroyClient() {
+            if (licenseClient) {
+                licenseClient.destroy()
+                licenseClient = null
+                showStatus('客户端已销毁', 'info')
+                document.getElementById('licenseInfo').style.display = 'none'
+            } else {
+                showStatus('客户端未初始化', 'error')
+            }
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            showStatus('请输入授权码并点击验证', 'info')
+        })
+    </script>
+</body>
+</html>
+
