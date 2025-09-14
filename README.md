@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 授权管理系统
 
 一个完整的软件授权码管理系统，支持授权码生成、验证、设备绑定、时间限制等功能。
@@ -276,3 +277,7 @@ if client.is_authorized():
 
 MIT License
 
+=======
+# license-management-system
+基于 Next.js 和 Supabase 的网页后台授权管理系统，支持软件授权码管理、设备激活、时间限制等功能
+>>>>>>> 299784b69a554b24a2af7f22acf24dc1276e9573
