@@ -17,14 +17,14 @@ export default function Home() {
               href="/login"
               className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors block text-center"
             >
-              登录管理后台
+              管理员登录
             </Link>
             
             <Link 
-              href="/test-deploy"
-              className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors block text-center"
+              href="/dashboard"
+              className="w-full bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700 transition-colors block text-center"
             >
-              测试页面
+              进入管理后台
             </Link>
           </div>
           

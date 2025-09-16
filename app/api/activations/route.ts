@@ -6,46 +6,44 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
+    const licenseId = searchParams.get('license_id')
     const status = searchParams.get('status')
-    const search = searchParams.get('search')
-    const productId = searchParams.get('product_id')
 
     // 构建查询条件
     let query = supabase
-      .from('licenses')
+      .from('activations')
       .select(`
         *,
-        products (
+        licenses (
           id,
-          name
+          license_key,
+          status,
+          end_time
         )
       `, { count: 'exact' })
 
+    // 授权ID过滤
+    if (licenseId) {
+      query = query.eq('license_id', licenseId)
+    }
+
     // 状态过滤
-    if (status) {
-      query = query.eq('status', status)
-    }
-
-    // 产品过滤
-    if (productId) {
-      query = query.eq('product_id', productId)
-    }
-
-    // 搜索过滤
-    if (search) {
-      query = query.or(`license_key.ilike.%${search}%,note.ilike.%${search}%`)
+    if (status === 'active') {
+      query = query.is('unbound_at', null)
+    } else if (status === 'unbound') {
+      query = query.not('unbound_at', 'is', null)
     }
 
     // 分页
     const from = (page - 1) * limit
     const to = from + limit - 1
 
-    const { data: licenses, error, count } = await query
-      .order('created_at', { ascending: false })
+    const { data: activations, error, count } = await query
+      .order('activated_at', { ascending: false })
       .range(from, to)
 
     if (error) {
-      console.error('查询授权列表失败:', error)
+      console.error('查询激活记录失败:', error)
       return NextResponse.json(
         { error: '查询失败' },
         { status: 500 }
@@ -55,7 +53,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
-        licenses: licenses || [],
+        activations: activations || [],
         pagination: {
           page,
           limit,
@@ -66,7 +64,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('查询授权列表异常:', error)
+    console.error('查询激活记录异常:', error)
     return NextResponse.json(
       { error: '服务器内部错误' },
       { status: 500 }

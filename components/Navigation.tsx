@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navigation = [
-  { name: '仪表盘', href: '/' },
+  { name: '仪表盘', href: '/dashboard' },
   { name: '授权管理', href: '/licenses' },
   { name: '激活记录', href: '/activations' },
   { name: '操作日志', href: '/logs' },

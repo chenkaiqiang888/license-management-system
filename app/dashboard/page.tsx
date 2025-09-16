@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import AdminLayout from '@/components/AdminLayout'
 
 interface DashboardStats {
   totalLicenses: number
@@ -59,49 +59,62 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">加载中...</p>
+      <AdminLayout title="仪表盘" subtitle="系统统计概览">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/30 mx-auto mb-4"></div>
+            <p className="text-white/70">加载中...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <h1 className="text-3xl font-bold text-gray-900">仪表盘</h1>
-            <Link
-              href="/"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-            >
-              返回首页
-            </Link>
+    <AdminLayout title="仪表盘" subtitle="系统统计概览">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all duration-200">
+          <div className="flex items-center">
+            <div className="p-3 bg-blue-500/20 rounded-lg mr-4">
+              <svg className="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-white/90 mb-1">总授权数</h3>
+              <p className="text-3xl font-bold text-white">{stats?.totalLicenses || 0}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all duration-200">
+          <div className="flex items-center">
+            <div className="p-3 bg-green-500/20 rounded-lg mr-4">
+              <svg className="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-white/90 mb-1">活跃授权</h3>
+              <p className="text-3xl font-bold text-white">{stats?.activeLicenses || 0}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all duration-200">
+          <div className="flex items-center">
+            <div className="p-3 bg-purple-500/20 rounded-lg mr-4">
+              <svg className="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-white/90 mb-1">总激活数</h3>
+              <p className="text-3xl font-bold text-white">{stats?.totalActivations || 0}</p>
+            </div>
           </div>
         </div>
       </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">总授权数</h3>
-            <p className="text-3xl font-bold text-blue-600">{stats?.totalLicenses || 0}</p>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">活跃授权</h3>
-            <p className="text-3xl font-bold text-green-600">{stats?.activeLicenses || 0}</p>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">总激活数</h3>
-            <p className="text-3xl font-bold text-purple-600">{stats?.totalActivations || 0}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    </AdminLayout>
   )
 }
